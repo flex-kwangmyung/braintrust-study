@@ -73,3 +73,72 @@ UI를 통해 AI 애플리케이션의 성능을 명확히 파악할 수 있으�
 - 개별 사례를 클릭하여 상세 추적 정보 확인
 - 상위 점수 확인
 - 개선 사항 또는 퇴보 사항으로 정렬
+
+### Run evals
+```bash
+braintrust eval eval_basic.py
+
+braintrust eval [file or directory] [file or directory] ...
+```
+- `--watch`: watch mode
+- `--dev` : dev mode
+
+**Github action**
+- braintrustdata/eval-action 액션을 사용하면 Github 워크플로 내에서 직접 평가를 실행할 수 있음. 
+- 평가를 실행할 때마다 액션이 자동으로 댓글을 게시:
+
+- 사용을 위해 `.github/workflows`에 yaml 파일 추가
+- 예시
+```yaml
+name: Run Python evals
+ 
+on:
+  push:
+    # Uncomment to run only when files in the 'evals' directory change
+    # - paths:
+    #     - "evals/**"
+ 
+permissions:
+  pull-requests: write
+  contents: read
+ 
+jobs:
+  eval:
+    name: Run evals
+    runs-on: ubuntu-latest
+ 
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+ 
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12" # Replace with your Python version
+ 
+      # Tweak this to a dependency manager of your choice
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r test-eval-py/requirements.txt
+ 
+      - name: Run Evals
+        uses: braintrustdata/eval-action@v1
+        with:
+          api_key: ${{ secrets.BRAINTRUST_API_KEY }}
+          runtime: python
+          root: my_eval_dir
+```
+
+자세한 내용은 [여기](https://github.com/braintrustdata/eval-action) 참고
+
+### Interpret evals
+
+UI 상세보기는 다음 기능을 제공
+- Diff mode toggle: 평가 실행 간 비교를 가능하게 합니다. 토글을 클릭하면 현재 평가 결과와 기준선 결과를 비교하여 확인할 수 있습니다.
+- Filter바: 테스트 케이스의 하위 집합에 집중할 수 있습니다. 자연어 또는 BTQL을 입력하여 필터링할 수 있습니다.
+- Column visivility: 열 표시 여부를 전환할 수 있습니다. 문제 영역을 집중적으로 확인하기 위해 회귀 분석별로 열을 정렬할 수도 있습니다.
+- Table: 평가 실행의 모든 테스트 케이스에 대한 데이터를 표시합니다.
