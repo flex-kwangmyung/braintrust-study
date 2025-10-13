@@ -17,5 +17,13 @@ Eval(
     "Say Hi Bot",  # Replace with your project name
     data=BaseExperiment(),
     task=lambda input: "Hi " + input,  # Replace with your LLM call
-    scores=[Battle.partial(instructions="Which response said 'Hi'?")],
+    scores=[Battle.partial(instructions="Which response said 'Hi'?")],s
 )
+
+# 특정 실험을 사용하려면, name을 지정
+# Eval(
+#     "Say Hi Bot",  # Replace with your project name
+#     data=BaseExperiment(name="main-123"),
+#     task=lambda input: "Hi " + input,  # Replace with your LLM call
+#     scores=[Battle.partial(instructions="Which response said 'Hi'?")],
+# )
