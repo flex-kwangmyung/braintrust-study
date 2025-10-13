@@ -52,4 +52,13 @@ Eval(
 )
 
 ########## Conditional scoring
-### wip
+# scoring function은 입력 데이터에 따라 달라질 수 있음. 예를 들어, 챗봇을 평가할 때는 계산기 스타일의 입력이 올바르게 답변되었는지 측정하는 점수 함수를 사용하고자 할 수 있음
+
+from autoevals import NumericDiff
+
+def caculator_accuracy(input, output, **kwargs):
+    if input["type"] != "calculator":
+        return None
+    
+    return NumericDiff(output, eval(input["text"]))
+
